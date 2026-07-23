@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./datasets:/app/datasets
+      - ./models:/app/models
+      - ./mlflow:/app/mlflow
+      - ./artifacts:/app/artifacts
+    environment:
+      - MLFLOW_TRACKING_URI=file:///app/mlflow
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

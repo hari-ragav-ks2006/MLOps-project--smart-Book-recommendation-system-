@@ -1,0 +1,20 @@
+stages:
+  validate:
+    cmd: python -c "from backend.app.services.data_pipeline import DataPipeline; dp=DataPipeline(); df=dp.load_dataset('Booksdataset.xlsx'); print('Dataset validation OK, shape:', df.shape)"
+    deps:
+      - Booksdataset.xlsx
+  preprocess:
+    cmd: python -c "from backend.app.services.data_pipeline import DataPipeline; dp=DataPipeline(); df=dp.load_dataset('Booksdataset.xlsx'); c=dp.preprocess_dataset(df); dp.save_processed_data(c)"
+    deps:
+      - Booksdataset.xlsx
+    outs:
+      - datasets/processed_data.parquet
+  train:
+    cmd: python mlops/train_pipeline.py
+    deps:
+      - datasets/processed_data.parquet
+      - params.yaml
+    outs:
+      - models/recommendation_model.joblib
+      - models/vectorizer.joblib
+      - models/model_metadata.json

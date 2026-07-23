@@ -1,0 +1,15 @@
+prepare:
+  dataset_path: "Booksdataset.xlsx"
+  processed_output: "datasets/processed_data.parquet"
+  reference_output: "datasets/reference_data.parquet"
+  current_output: "datasets/current_data.parquet"
+
+train:
+  max_features: 5000
+  metric: "cosine"
+  algorithm: "brute"
+  n_neighbors: 20
+
+evaluate:
+  sample_size: 500
+  top_k: 5
