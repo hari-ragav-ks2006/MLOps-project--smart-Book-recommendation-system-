@@ -1,0 +1,8 @@
+[
+  {
+    "timestamp": "2026-09-27T10:06:27.554445+00:00",
+    "event_type": "PIPELINE_COMPLETE",
+    "details": "run_id=run_20260927_100504_59a273 duration=82.93s",
+    "status": "SUCCESS"
+  }
+]

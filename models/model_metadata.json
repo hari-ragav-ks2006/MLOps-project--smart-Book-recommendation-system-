@@ -1,7 +1,7 @@
 {
   "num_items": 271359,
   "max_features": 5000,
-  "train_latency_sec": 6.6279,
+  "train_latency_sec": 10.4002,
   "precision_at_5": 0.98,
   "recall_at_5": 0.95,
   "features_used": [
@@ -25,5 +25,10 @@
     "18",
     "19",
     "1920"
-  ]
+  ],
+  "dataset_hash": "1c0f0a73a145",
+  "run_id": "run_20260927_100504_59a273",
+  "mlflow_run_id": "b3b4def6270540a0ad213c543527ddbe",
+  "promoted_at": "2026-09-27T10:06:27.524331+00:00",
+  "trigger_reason": "manual_trigger"
 }

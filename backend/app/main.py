@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.app.api.endpoints import router as api_router
+from backend.app.api.admin_endpoints import admin_router
 from backend.app.config import DATASETS_DIR
 
 app = FastAPI(
@@ -30,6 +31,11 @@ except Exception:
 app.include_router(api_router, prefix="/api/v1")
 app.include_router(api_router, prefix="/api")
 app.include_router(api_router)
+
+# Admin Router
+app.include_router(admin_router, prefix="/api/v1")
+app.include_router(admin_router, prefix="/api")
+app.include_router(admin_router)
 
 
 @app.get("/")

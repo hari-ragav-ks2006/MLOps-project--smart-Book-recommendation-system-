@@ -1,119 +1,130 @@
 import React, { useState, useEffect } from 'react';
-import { Bookmark, BookOpen, Trash2, ArrowRight, Star, Heart } from 'lucide-react';
+import { Bookmark, BookOpen, Trash2, ArrowRight, Sparkles, Heart } from 'lucide-react';
+import BookCover from '../components/UI/BookCover';
 
 export default function FavoritesPage({ setActiveTab, setSelectedIsbn }) {
-  const [favorites, setFavorites] = useState([]);
+  const [shelf, setShelf] = useState([]);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('smartbook_favorites') || '[]');
-    setFavorites(saved);
+    const saved = JSON.parse(localStorage.getItem('smartbook_reading_list') || localStorage.getItem('smartbook_favorites') || localStorage.getItem('aardvark_shelf') || '[]');
+    setShelf(saved);
   }, []);
 
   const remove = (isbn) => {
-    const updated = favorites.filter(f => String(f.ISBN) !== String(isbn));
-    setFavorites(updated);
+    const updated = shelf.filter(f => String(f.ISBN) !== String(isbn));
+    setShelf(updated);
+    localStorage.setItem('smartbook_reading_list', JSON.stringify(updated));
     localStorage.setItem('smartbook_favorites', JSON.stringify(updated));
   };
 
   const clearAll = () => {
-    setFavorites([]);
+    setShelf([]);
+    localStorage.removeItem('smartbook_reading_list');
     localStorage.removeItem('smartbook_favorites');
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-6 pb-16">
 
       {/* Header */}
-      <div
-        className="rounded-3xl p-6 md:p-8 reveal"
-        style={{
-          background: 'rgba(13,17,23,0.8)',
-          border: '1px solid rgba(255,255,255,0.07)',
-          backdropFilter: 'blur(24px)',
-        }}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(236,72,153,0.12)' }}>
-              <Bookmark className="w-5 h-5 text-pink-400" />
-            </div>
-            <div>
-              <h2 className="font-extrabold text-xl text-white">Favorites</h2>
-              <p className="text-slate-500 text-xs">{favorites.length} books saved to your reading list</p>
-            </div>
+      <div className="rounded-3xl p-6 sm:p-8 bg-white border-2 border-[#141416] shadow-[6px_6px_0px_#141416] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAED8F] border border-[#141416] text-[10px] font-black uppercase mb-1">
+            <Bookmark className="w-3 h-3" />
+            <span>Personal Collection</span>
           </div>
-          {favorites.length > 0 && (
-            <button onClick={clearAll} className="btn-ghost text-rose-400 hover:text-rose-300 gap-1.5">
-              <Trash2 className="w-4 h-4" />
-              Clear All
-            </button>
-          )}
+          <h2 className="text-2xl sm:text-3xl font-editorial font-extrabold text-[#141416]">
+            My Reading List
+          </h2>
+          <p className="text-xs text-[#5E5E68] font-medium mt-1">
+            {shelf.length} {shelf.length === 1 ? 'title' : 'titles'} saved across your exploration sessions.
+          </p>
         </div>
+
+        {shelf.length > 0 && (
+          <button
+            onClick={clearAll}
+            className="btn-secondary text-xs py-2 px-4 gap-1.5 text-rose-600 border-rose-300 hover:bg-rose-50 cursor-pointer"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Clear List</span>
+          </button>
+        )}
       </div>
 
-      {/* Empty state */}
-      {favorites.length === 0 ? (
-        <div
-          className="rounded-3xl py-24 text-center reveal"
-          style={{ background: 'rgba(13,17,23,0.5)', border: '1px dashed rgba(255,255,255,0.07)' }}
-        >
-          <Heart className="w-14 h-14 mx-auto text-slate-700 mb-4" />
-          <h3 className="text-lg font-bold text-white mb-2">No favorites yet</h3>
-          <p className="text-slate-500 text-sm mb-5">Start exploring books and save the ones you love</p>
-          <button onClick={() => setActiveTab('discover')} className="btn-primary">
-            <BookOpen className="w-4 h-4" />
-            Explore Books
-          </button>
+      {/* Empty List State */}
+      {shelf.length === 0 ? (
+        <div className="rounded-3xl py-20 text-center bg-white border-2 border-[#141416] shadow-[6px_6px_0px_#141416] max-w-lg mx-auto p-8">
+          <div className="w-16 h-16 rounded-full bg-[#FAED8F] border-2 border-[#141416] mx-auto flex items-center justify-center mb-4 shadow-[3px_3px_0px_#141416]">
+            <Heart className="w-8 h-8 text-[#141416]" />
+          </div>
+          <h3 className="font-editorial font-bold text-xl text-[#141416] mb-2">
+            Your Reading List is Empty
+          </h3>
+          <p className="text-[#5E5E68] text-xs font-medium mb-6 leading-relaxed">
+            Browse the 271,000+ title catalog or generate AI recommendations to build your personal reading list!
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button onClick={() => setActiveTab('discover')} className="btn-primary text-xs py-2.5 px-6 cursor-pointer">
+              <BookOpen className="w-4 h-4" />
+              <span>Browse All Books</span>
+            </button>
+            <button onClick={() => setActiveTab('recommendations')} className="btn-secondary text-xs py-2.5 px-6 bg-[#E3D9FF] cursor-pointer">
+              <Sparkles className="w-4 h-4" />
+              <span>Get AI Recommendations</span>
+            </button>
+          </div>
         </div>
       ) : (
-        <div className="space-y-3">
-          {favorites.map((book, idx) => {
-            const img = book['Image-URL-M'] || book['Image-URL-L'] || book['Image-URL-S'];
+        <div className="space-y-4">
+          {shelf.map((book, idx) => {
             return (
               <div
                 key={idx}
-                className="glass-card rounded-2xl p-4 flex items-center gap-4 reveal"
-                style={{ animationDelay: `${idx * 0.05}s` }}
+                className="rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-4 bg-white border-2 border-[#141416] shadow-[4px_4px_0px_#141416] hover:shadow-[6px_6px_0px_#141416] transition-all"
               >
                 {/* Thumbnail */}
-                <div
-                  className="w-14 h-20 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center"
-                  style={{ background: 'rgba(255,255,255,0.04)' }}
-                >
-                  {img && img.startsWith('http') ? (
-                    <img src={img} alt={book['Book-Title']} className="w-full h-full object-cover" onError={e => { e.target.style.display='none'; }} />
-                  ) : (
-                    <BookOpen className="w-6 h-6 text-slate-600" />
-                  )}
+                <div className="w-16 h-22 rounded-xl overflow-hidden flex-shrink-0 border border-[#141416]">
+                  <BookCover book={book} size="M" className="w-full h-full" />
                 </div>
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-[14px] text-white truncate">{book['Book-Title']}</h4>
-                  <p className="text-sm text-slate-500 mt-0.5">{book['Book-Author'] || 'Unknown'}</p>
+                  <h4 className="font-editorial font-bold text-base text-[#141416] truncate leading-snug">
+                    {book['Book-Title']}
+                  </h4>
+                  <p className="text-xs text-[#5E5E68] font-bold mt-0.5">
+                    {book['Book-Author'] || 'Unknown Author'}
+                  </p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="badge badge-purple">{book['Year-Of-Publication'] || '—'}</span>
-                    <span className="text-[10px] text-slate-600">{book['Publisher'] || ''}</span>
+                    <span className="badge badge-yellow text-[10px]">
+                      {book['Year-Of-Publication'] || '2024'}
+                    </span>
+                    <span className="text-[10px] text-[#5E5E68] font-mono">
+                      {book['Publisher'] || ''}
+                    </span>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2 flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
                   <button
                     onClick={() => {
                       setSelectedIsbn && setSelectedIsbn(book['ISBN'] || book['Book-Title']);
                       setActiveTab && setActiveTab('details');
                     }}
-                    className="btn-secondary text-xs py-1.5 px-3 gap-1"
-                    style={{ borderRadius: '10px' }}
+                    className="btn-primary text-xs py-2 px-4 gap-1.5 shadow-[2px_2px_0px_#141416] cursor-pointer"
                   >
-                    View <ArrowRight className="w-3 h-3" />
+                    <span>Inspect 3D</span>
+                    <ArrowRight className="w-3 h-3" />
                   </button>
+
                   <button
                     onClick={() => remove(book.ISBN)}
-                    className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
+                    className="p-2 rounded-full border border-gray-200 hover:bg-red-50 text-red-600 transition-colors cursor-pointer"
+                    title="Remove from List"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>

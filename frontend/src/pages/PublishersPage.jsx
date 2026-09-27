@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Building2, Search, BookOpen, ArrowRight, Loader2, LayoutGrid } from 'lucide-react';
+import BookCover from '../components/UI/BookCover';
 
 function PublisherCard({ publisher, index, onClick }) {
   const colors = [
@@ -90,12 +91,9 @@ export default function PublishersPage({ setSelectedIsbn, setActiveTab }) {
               ) : (
                 <div className="space-y-3 max-h-[500px] overflow-y-auto">
                   {pubBooks.map((book,i) => {
-                    const img = book['Image-URL-S']||book['Image-URL-M'];
                     return (
                       <div key={i} className="flex gap-3 items-center cursor-pointer group" onClick={()=>{ setSelectedIsbn&&setSelectedIsbn(book['ISBN']||book['Book-Title']); setActiveTab&&setActiveTab('details'); }}>
-                        <div className="w-10 h-14 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100">
-                          {img ? <img src={img} alt="" className="w-full h-full object-cover" onError={e=>{e.target.style.display='none';}}/> : <BookOpen className="w-4 h-4 text-gray-200"/>}
-                        </div>
+                        <BookCover book={book} size="S" className="w-10 h-14 rounded-lg flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="text-[12px] font-semibold text-gray-900 truncate group-hover:text-rose-600 transition-colors">{book['Book-Title']}</p>
                           <p className="text-[10px] text-gray-400">{book['Book-Author']||'—'}</p>
